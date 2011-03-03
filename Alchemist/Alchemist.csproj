@@ -48,8 +48,20 @@
   <ItemGroup>
     <Compile Include="AlchemyController.cs" />
     <Compile Include="Chemist.cs" />
+    <Compile Include="Commands\AddMultiComboCommand.cs" />
+    <Compile Include="Commands\AddSpecificRuleCommand.cs" />
+    <Compile Include="Commands\CreateRuleCommand.cs" />
+    <Compile Include="Commands\FinalizeElementCommand.cs" />
+    <Compile Include="Commands\NewElementCommand.cs" />
+    <Compile Include="Commands\DisplayRecommendedRule.cs" />
+    <Compile Include="Commands\IsFinishedCommand.cs" />
+    <Compile Include="Commands\ExitCommand.cs" />
+    <Compile Include="Commands\ValidateInput.cs" />
     <Compile Include="Communicator.cs" />
+    <Compile Include="IPreCommand.cs" />
+    <Compile Include="Do.cs" />
     <Compile Include="ElementFactory.cs" />
+    <Compile Include="ICommand.cs" />
     <Compile Include="ICommunicator.cs" />
     <Compile Include="RuleSetXmlSerializer.cs" />
     <Compile Include="IStreamFactory.cs" />

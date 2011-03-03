@@ -47,15 +47,15 @@ namespace UnitTests
 		}
 
 		[TestMethod]
-		[Ignore]
-		public void CanUseReccomendationFunctionality()
+		public void UserCanExplicitlyAddRuleAndResult()
 		{
 			var rs = new RuleSet();
-			var c = Setup( rs, new[] { "fire", ">water", "#water,water", "alcohol", "!" } );
+			var c = Setup( rs, new[] { "fire", ">water", "#water,water:alcohol", "!" } );
 
 			c.Cook();
 
-			Assert.AreEqual( "alcohol", rs.Rules.First( r => r.Equals( new Rule( new[] { "water", "water" } ) ) ) );
+			Assert.AreEqual( 1, rs.Rules.Count( r => r.Equals( new Rule( new[] { "water", "water" } ) ) ) );
+			Assert.AreEqual( "alcohol", rs.Rules.First( r => r.Equals( new Rule( new[] { "water", "water" } ) ) ).Result[0].Name );
 		}
 
 		static Chemist Setup( RuleSet ruleSet, IEnumerable<string> input )

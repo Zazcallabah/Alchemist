@@ -55,5 +55,15 @@ namespace UnitTests
 
 			Assert.IsTrue( factory.ExistingElement( "fire" ) );
 		}
+
+		[TestMethod]
+		public void CreatedElementTrimsWhitespaceInName()
+		{
+			var rs = new RuleSet();
+			var factory = new ElementFactory( rs );
+			factory.MakeElement( "   fire   " );
+
+			Assert.IsTrue( factory.ExistingElement( "fire" ) );
+		}
 	}
 }

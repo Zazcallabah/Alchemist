@@ -138,7 +138,7 @@ namespace Alchemist
 
 		public Element( string name )
 		{
-			Name = name;
+			Name = name.Trim();
 		}
 
 		[XmlText]
@@ -256,8 +256,8 @@ namespace Alchemist
 
 		public Rule( IEnumerable<Element> ingredients, IEnumerable<Element> result )
 		{
-			Ingredients = ingredients.Where( i => i != null ).ToArray();
-			Result = result.Where( i => i != null ).ToArray();
+			Ingredients = ingredients.Where( i => i != null && !string.IsNullOrEmpty( i.Name ) ).ToArray();
+			Result = result.Where( i => i != null && !string.IsNullOrEmpty( i.Name ) ).ToArray();
 		}
 
 		Element[] _ingredients;

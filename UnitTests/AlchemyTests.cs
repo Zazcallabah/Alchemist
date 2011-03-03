@@ -21,6 +21,85 @@ namespace UnitTests
 			c.RegisterNewElement( "burn" );
 		}
 
+		//[TestMethod]
+		//public void ControllerAccountsForFinalizedElementsWhenCalculatingStateFinished()
+		//{
+		//    var rs = new RuleSet()
+		//    {
+		//        FoundElements = new[] { new Element( "fire" ), new Element( "water" ) { TerminalValue = true } },
+		//        Rules = new[] { new Rule
+		//        {
+		//            Ingredients = new [] { new Element( "fire" ), new Element("fire") }
+		//        }}
+
+		//    };
+		//    var c = new AlchemyController( rs );
+
+		//    Assert.AreEqual( AlchemyState.Finished, c.State );
+		//}
+
+		[TestMethod]
+		public void ControllerCanSayIfHasntStartedYet()
+		{
+			var rs = new RuleSet();
+			var c = new AlchemyController( rs );
+
+			Assert.AreEqual( AlchemyState.NotStarted, c.State );
+		}
+
+		[TestMethod]
+		public void ControllerCanSayThatItHasStarted()
+		{
+			var rs = new RuleSet() { FoundElements = new[] { new Element( "fire" ) } };
+			var c = new AlchemyController( rs );
+
+			Assert.AreEqual( AlchemyState.Started, c.State );
+		}
+
+		[TestMethod]
+		public void ControllerCanSayThatItHasFinished()
+		{
+			var rs = new RuleSet()
+			{
+				FoundElements = new[] { new Element( "fire" ) },
+				Rules = new[] { new Rule
+				{
+					Ingredients = new [] { new Element( "fire" ), new Element("fire") }
+				}}
+
+			};
+			var c = new AlchemyController( rs );
+
+			Assert.AreEqual( AlchemyState.Finished, c.State );
+		}
+
+		[TestMethod]
+		public void ControllerCanSayThatItHasFinishedWithComplexRuleset()
+		{
+			TestControllerForRules( 1, 1 );
+			TestControllerForRules( 1, 2 );
+			TestControllerForRules( 2, 3 );
+			TestControllerForRules( 2, 7 );
+			TestControllerForRules( 3, 6 );
+			TestControllerForRules( 4, 10 );
+			TestControllerForRules( 100, 5050 );
+		}
+
+		void TestControllerForRules( int elements, int rules )
+		{
+			var rs = new RuleSet()
+			{
+				FoundElements = TestTools.GenerateElements( elements ),
+				Rules = TestTools.GenerateRules( rules )
+			};
+
+			var c = new AlchemyController( rs );
+
+			Assert.AreEqual( AlchemyState.Finished, c.State );
+		}
+
+
+
 		[TestMethod]
 		public void CanRecommendRuleForControllerToPrioritizeInRecomendations()
 		{

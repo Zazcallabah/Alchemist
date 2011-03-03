@@ -1,68 +1,81 @@
-﻿namespace Alchemist
+﻿using System.Collections.Generic;
+using System.Linq;
+using Alchemist.Commands;
+
+namespace Alchemist
 {
 	public class Chemist
 	{
 		readonly AlchemyController _controller;
 		readonly ICommunicator _communicator;
+		readonly IOrderedEnumerable<ICommand> _commands;
+		readonly IOrderedEnumerable<IPreCommand> _preCommands;
 
 		public Chemist( AlchemyController controller, ICommunicator communicator )
 		{
 			_controller = controller;
 			_communicator = communicator;
+			_preCommands = new List<IPreCommand>
+			{
+				new IsFinishedCommand(),
+				new DisplayRecommendedRule(),
+			}.OrderByDescending( c => c.Priority );
+
+			_commands = new List<ICommand>
+			{
+				new ValidateInput(),
+				new ExitCommand(),
+				new FinalizeElementCommand(),
+				new NewElementCommand(),
+				new AddMultiComboCommand(),
+				new CreateRuleCommand(),
+				new AddSpecificRuleCommand()
+			}.OrderByDescending( c => c.Priority );
 		}
 
 		public void Cook()
 		{
-			_communicator.Display( "! to exit, + to set terminal element, > to add explicit element, # to recommend rule" );
-			string em1 = null, em2 = null;
+			PrintMenu();
+			if( _controller.State == AlchemyState.NotStarted )
+				_communicator.Display( "No elements recorded, please add basic elements to combine." );
+
 			while( true )
 			{
-				Rule testthisrule = _controller.RecommendNewRule( em1, em2 );
-				if( testthisrule == Rule.EmptyRule )
-					break;
-
-				_communicator.Display( testthisrule == null ? "No elements recorded, please add." : testthisrule.ToString() );
+				foreach( var c in _preCommands )
+				{
+					var result = c.Run( _controller, _communicator );
+					if( result == Do.Exit )
+						return;
+				}
 
 				var reportback = _communicator.GetInput();
-				if( reportback == null )
-					continue;
 
-				if( reportback.StartsWith( "#" ) )
+				// Special case for first entered element
+				if( _controller.State == AlchemyState.NotStarted )
 				{
-					var ems = reportback.TrimStart( '#' ).Split( ',' );
-					if( ems.Length >= 2 )
-					{
-						em1 = ems[0].Trim();
-						em2 = ems[1].Trim();
-					}
-					else
-					{
-						em1 = em2 = null;
-					}
+					var c = new NewElementCommand();
+					if( !string.IsNullOrEmpty( reportback ) )
+						c.Run( reportback, _controller, _communicator );
+					continue;
 				}
-				else
+
+				foreach( var c in _commands.Where( c => c.AppliesTo( reportback ) ) )
 				{
-					em1 = em2 = null;
-					if( testthisrule == null || reportback.StartsWith( ">" ) )
-						_controller.RegisterNewElement( reportback.TrimStart( '>' ) );
-					else if( reportback.StartsWith( "+" ) )
-					{
-						_controller.FinalizeElement( reportback.TrimStart( '+' ) );
-					}
-					else if( reportback.StartsWith( "!" ) )
-					{
-						_communicator.Display( "Premature exit." );
+					var result = c.Run( reportback, _controller, _communicator );
+					if( result == Do.Exit )
+						return;
+					if( result == Do.AnotherRule )
 						break;
-					}
-					else
-					{
-						testthisrule.SetResult( reportback );
-						_controller.ReportChangedRule( testthisrule );
-					}
 				}
+
 				_communicator.Display( "..." );
 			}
-			_communicator.Display( "Game is done" );
+		}
+
+		void PrintMenu()
+		{
+			foreach( var c in _commands )
+				_communicator.Display( c.ToString() );
 		}
 	}
 }

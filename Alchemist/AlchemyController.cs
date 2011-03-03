@@ -15,6 +15,18 @@ namespace Alchemist
 			_persistedIndex = 0;
 		}
 
+		public AlchemyState State
+		{
+			get
+			{
+				if( _rs.FoundElements.Length == 0 )
+					return AlchemyState.NotStarted;
+				if( _rs.Rules.Length >= ( _rs.FoundElements.Length + 1 ) * _rs.FoundElements.Length / 2 )
+					return AlchemyState.Finished;
+				return AlchemyState.Started;
+			}
+		}
+
 		public void RegisterNewElement( string element )
 		{
 			if( !string.IsNullOrEmpty( element ) )
@@ -69,7 +81,6 @@ namespace Alchemist
 			foreach( var element in rule.Result )
 				RegisterNewElement( element.Name );
 
-
 			_rs.AddTestedRule( rule );
 		}
 
@@ -95,5 +106,18 @@ namespace Alchemist
 
 			return RecommendNewRule();
 		}
+
+		public void ForeachNonterminalElement( Action<Element> @do )
+		{
+			foreach( var e in _rs.FoundElements.Where( e => !e.TerminalSpecified || ( e.TerminalSpecified && !e.Terminal ) ) )
+				@do( e );
+		}
+	}
+
+	public enum AlchemyState
+	{
+		NotStarted,
+		Started,
+		Finished
 	}
 }

@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AlchemyTests.cs" />
+    <Compile Include="CommandTest.cs" />
     <Compile Include="ElementFactoryTests.cs" />
     <Compile Include="EntityTests.cs" />
     <Compile Include="EqualityTests.cs" />
@@ -48,6 +49,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializationTests.cs" />
     <Compile Include="ChemistTests.cs" />
+    <Compile Include="TestTools.cs" />
     <Compile Include="TimedRoundtripTests.cs" />
   </ItemGroup>
   <ItemGroup>
