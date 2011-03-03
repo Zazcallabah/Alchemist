@@ -47,6 +47,7 @@ namespace UnitTests
 		}
 
 		[TestMethod]
+		[Ignore]
 		public void CanUseReccomendationFunctionality()
 		{
 			var rs = new RuleSet();
