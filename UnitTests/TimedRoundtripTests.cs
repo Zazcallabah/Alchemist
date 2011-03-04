@@ -11,6 +11,27 @@ namespace UnitTests
 	[Ignore]
 	public class TimedRoundtripTests
 	{
+		[TestMethod]
+		[DeploymentItem( "xmldata\\timingtest.xml" )]
+		public void TimeMultiAddFunction()
+		{
+			var comm = new TestCommunicator();
+			var input = new[] { ">anything", "*anything", "!" };
+			foreach( var s in input )
+				comm.InputQueue.Enqueue( s );
+			var rs = GetFromXml( "timingtest.xml" );
+			var controller = new AlchemyController( rs );
+			var chemist = new Chemist( controller, comm );
+			long mark = 0;
+			comm.DisplayCalled += ( s, e ) =>
+				{
+					if( s.ToString().Contains( "..." ) )
+						mark = DateTime.Now.Ticks;
+				};
+			chemist.Cook();
+			var time = new TimeSpan( DateTime.Now.Ticks - mark );
+			Assert.Fail( "Took: " + time );
+		}
 
 		[TestMethod]
 		[DeploymentItem( "xmldata\\timingtest.xml" )]

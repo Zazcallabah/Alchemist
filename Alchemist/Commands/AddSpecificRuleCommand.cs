@@ -16,9 +16,18 @@ namespace Alchemist.Commands
 
 			var ingredients = splitinput[0].Split( ',' );
 
+			foreach( var ingredient in ingredients )
+			{
+				if( !controller.ElementExists( ingredient ) )
+				{
+					communicator.Display( "Bad data, element named '" + ingredient + "' isnt in list of known elements. If this isnt a typo, please add element using '>element', or, if possible, add rule that creates element" );
+					return Do.AnotherRule;
+				}
+			}
+
 			var rule = new Rule( ingredients );
 			rule.SetResult( splitinput[1] );
-			controller.ReportChangedRule( rule );
+			controller.ReportChangedRule( rule, true );
 
 			return Do.AnotherRule;
 		}

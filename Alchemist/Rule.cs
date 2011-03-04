@@ -126,6 +126,24 @@ namespace Alchemist
 
 			FirePropertyChanged( "FoundElements" );
 		}
+
+		public void ReplaceExistingRuleContent( Rule rule )
+		{
+			var ruleref = Rules.FirstOrDefault( r => r.Equals( rule ) );
+			if( ruleref != null )
+			{
+				if( HashcodeFor( rule.Result ) != HashcodeFor( ruleref.Result ) )
+				{
+					ruleref.Result = rule.Result;
+					FirePropertyChanged( "Rules" );
+				}
+			}
+		}
+
+		int HashcodeFor( Element[] elements )
+		{
+			return elements.Sum( e => e.GetHashCode() );
+		}
 	}
 
 

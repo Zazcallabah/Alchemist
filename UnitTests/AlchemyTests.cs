@@ -21,6 +21,40 @@ namespace UnitTests
 			c.RegisterNewElement( "burn" );
 		}
 
+		[TestMethod]
+		public void RuleOverrideDontTriggerPropchangedIfRuleNotChanged()
+		{
+			var rs = new RuleSet()
+			{
+				FoundElements = new[] { new Element( "fire" ), new Element( "water" ) },
+				Rules = new[] { new Rule( new[] { "fire", "fire" }, "fire" ) }
+			};
+			var c = new AlchemyController( rs );
+			int count = 0;
+			rs.PropertyChanged += ( a, e ) => { count++; };
+
+			c.ReportChangedRule( new Rule( new[] { "fire", "fire" }, "fire" ), true );
+
+			Assert.AreEqual( 0, count );
+		}
+
+		[TestMethod]
+		public void RuleOverrideTriggersPropchangedIfRuleChanged()
+		{
+			var rs = new RuleSet()
+			{
+				FoundElements = new[] { new Element( "fire" ), new Element( "water" ) },
+				Rules = new[] { new Rule( new[] { "fire", "fire" }, "fire" ) }
+			};
+			var c = new AlchemyController( rs );
+			int count = 0;
+			rs.PropertyChanged += ( a, e ) => { count++; };
+
+			c.ReportChangedRule( new Rule( new[] { "fire", "fire" }, "water" ), true );
+
+			Assert.AreEqual( 1, count );
+		}
+
 		//[TestMethod]
 		//public void ControllerAccountsForFinalizedElementsWhenCalculatingStateFinished()
 		//{
@@ -96,52 +130,6 @@ namespace UnitTests
 			var c = new AlchemyController( rs );
 
 			Assert.AreEqual( AlchemyState.Finished, c.State );
-		}
-
-
-
-		[TestMethod]
-		public void CanRecommendRuleForControllerToPrioritizeInRecomendations()
-		{
-			var rs = new RuleSet();
-			var c = new AlchemyController( rs );
-			c.RegisterNewElement( "fire" );
-			c.RegisterNewElement( "water" );
-			c.RegisterNewElement( "burn" );
-
-			var r = c.RecommendNewRule( "burn", "water" );
-
-			Assert.AreNotEqual( new Rule( new[] { "fire", "fire" } ), r );
-			Assert.AreEqual( new Rule( new[] { "burn", "water" } ), r );
-		}
-
-		[TestMethod]
-		public void IgnoresInputWhenRecommendingNonexistentElements()
-		{
-			var rs = new RuleSet();
-			var c = new AlchemyController( rs );
-			c.RegisterNewElement( "fire" );
-			c.RegisterNewElement( "water" );
-			c.RegisterNewElement( "burn" );
-
-			var r = c.RecommendNewRule( "burn", "aoeu" );
-
-			Assert.AreEqual( new Rule( new[] { "fire", "fire" } ), r );
-		}
-
-		[TestMethod]
-		public void OrderDoesntmatterForPrefferedRule()
-		{
-			var rs = new RuleSet();
-			var c = new AlchemyController( rs );
-			c.RegisterNewElement( "fire" );
-			c.RegisterNewElement( "water" );
-			c.RegisterNewElement( "burn" );
-
-			var r = c.RecommendNewRule( "burn", "water" );
-			var r2 = c.RecommendNewRule( "water", "burn" );
-
-			Assert.AreEqual( r2, r );
 		}
 
 		[TestMethod]

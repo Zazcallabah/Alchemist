@@ -35,6 +35,7 @@ namespace Alchemist
 				_factory.MakeElement( element );
 			}
 		}
+
 		int _persistedIndex;
 		public Rule RecommendNewRule()
 		{
@@ -72,11 +73,19 @@ namespace Alchemist
 			return new Rule( new[] { e1, e2 }, new Element[0] );
 		}
 
-		public void ReportChangedRule( Rule rule )
+		public void ReportChangedRule( Rule rule, bool overridesExistingRule )
 		{
 			if( _rs.Rules.Any( r => r.Equals( rule ) ) )
-				// update content or return?
+			{
+				if( overridesExistingRule )
+				{
+					foreach( var result in rule.Result )
+						RegisterNewElement( result.Name );
+
+					_rs.ReplaceExistingRuleContent( rule );
+				}
 				return;
+			}
 
 			foreach( var element in rule.Result )
 				RegisterNewElement( element.Name );
@@ -84,33 +93,27 @@ namespace Alchemist
 			_rs.AddTestedRule( rule );
 		}
 
+		public void ReportChangedRule( Rule rule )
+		{
+			ReportChangedRule( rule, false );
+		}
+
 		public void FinalizeElement( string elementname )
 		{
 			_rs.SetTerminalElement( elementname );
 		}
 
-		public Rule RecommendNewRule( string s1, string s2 )
-		{
-			if( string.IsNullOrEmpty( s1 ) || string.IsNullOrEmpty( s2 ) )
-				return RecommendNewRule();
 
-			var e1 = new Element( s1 );
-			var e2 = new Element( s2 );
-
-			if( _rs.FoundElements.Contains( e1 ) && _rs.FoundElements.Contains( e2 ) )
-			{
-				var rule = NewRuleFromIngredients( e1, e2 );
-				if( !_rs.Rules.Contains( rule ) )
-					return rule;
-			}
-
-			return RecommendNewRule();
-		}
 
 		public void ForeachNonterminalElement( Action<Element> @do )
 		{
 			foreach( var e in _rs.FoundElements.Where( e => !e.TerminalSpecified || ( e.TerminalSpecified && !e.Terminal ) ) )
 				@do( e );
+		}
+
+		public bool ElementExists( string ingredient )
+		{
+			return _factory.ExistingElement( ingredient );
 		}
 	}
 

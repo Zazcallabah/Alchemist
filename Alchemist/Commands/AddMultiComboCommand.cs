@@ -12,8 +12,8 @@ namespace Alchemist.Commands
 		public Do Run( string input, AlchemyController controller, ICommunicator communicator )
 		{
 			string elementname = input.TrimStart( '*' );
-			controller.RegisterNewElement( elementname );
-			controller.ForeachNonterminalElement( ( e ) => controller.ReportChangedRule( new Rule( new[] { elementname, e.Name } ) ) );
+			if( controller.ElementExists( elementname ) )
+				controller.ForeachNonterminalElement( ( e ) => controller.ReportChangedRule( new Rule( new[] { elementname, e.Name } ) ) );
 			return Do.AnotherRule;
 		}
 
