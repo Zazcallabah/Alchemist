@@ -28,6 +28,7 @@ namespace Alchemist
 				new FinalizeElementCommand(),
 				new NewElementCommand(),
 				new AddMultiComboCommand(),
+				new PrintCommand(),
 				new CreateRuleCommand(),
 				new AddSpecificRuleCommand()
 			}.OrderByDescending( c => c.Priority );

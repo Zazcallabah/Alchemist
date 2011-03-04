@@ -115,6 +115,13 @@ namespace Alchemist
 		{
 			return _factory.ExistingElement( ingredient );
 		}
+
+		public void ForEachRuleContaining( string elementname, Action<Rule> action )
+		{
+			var rules = _rs.Rules.Where( r => r.Ingredients.Any( e => e.Name.Equals( elementname ) ) || r.Result.Any( e => e.Name.Equals( elementname ) ) );
+			foreach( var rule in rules )
+				action( rule );
+		}
 	}
 
 	public enum AlchemyState

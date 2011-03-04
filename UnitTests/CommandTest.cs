@@ -11,6 +11,84 @@ namespace UnitTests
 	public class CommandTest
 	{
 		[TestMethod]
+		public void GraphCommandExists()
+		{
+			ICommand command = new GraphCommand();
+
+			Assert.IsTrue( command.AppliesTo( "@fire" ) );
+		}
+
+		[TestMethod]
+		public void PrintCommandHasPrint()
+		{
+			ICommand command = new PrintCommand();
+
+			Assert.IsTrue( command.AppliesTo( "?fire" ) );
+		}
+
+		[TestMethod]
+		public void PrintCommandCanPrint()
+		{
+			ICommand command = new PrintCommand();
+			var comm = new TestCommunicator();
+			int count = 0;
+			comm.DisplayCalled += ( a, e ) =>
+			{
+				count++;
+			};
+			var rs = new RuleSet()
+				{
+					Rules = new[] { new Rule( new[] { "fire", "water" }, "water" ) }
+				};
+			var controller = new AlchemyController( rs );
+			command.Run( "?fire", controller, comm );
+
+			Assert.AreEqual( 1, count );
+		}
+
+		[TestMethod]
+		public void PrintCommandWontPrintEmpty()
+		{
+			ICommand command = new PrintCommand();
+			var comm = new TestCommunicator();
+			int count = 0;
+			comm.DisplayCalled += ( a, e ) =>
+			{
+				count++;
+			};
+			var rs = new RuleSet()
+				{
+					Rules = new[] { new Rule( new[] { "fire", "water" } ) }
+				};
+			var controller = new AlchemyController( rs );
+			command.Run( "?fire", controller, comm );
+
+			Assert.AreEqual( 0, count );
+
+		}
+
+		[TestMethod]
+		public void PrintCommandWontPrintIrrelevant()
+		{
+			ICommand command = new PrintCommand();
+			var comm = new TestCommunicator();
+			int count = 0;
+			comm.DisplayCalled += ( a, e ) =>
+			{
+				count++;
+			};
+			var rs = new RuleSet()
+				{
+					Rules = new[] { new Rule( new[] { "fire", "water" }, "water" ) }
+				};
+			var controller = new AlchemyController( rs );
+			command.Run( "?fire3", controller, comm );
+
+			Assert.AreEqual( 0, count );
+
+		}
+
+		[TestMethod]
 		public void CommandCanAddRulesForEveryPossibleCombinationForAnElement()
 		{
 			ICommand command = new AddMultiComboCommand();

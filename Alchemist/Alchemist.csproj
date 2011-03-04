@@ -50,6 +50,8 @@
     <Compile Include="Chemist.cs" />
     <Compile Include="Commands\AddMultiComboCommand.cs" />
     <Compile Include="Commands\AddSpecificRuleCommand.cs" />
+    <Compile Include="Commands\GraphCommand.cs" />
+    <Compile Include="Commands\PrintCommand.cs" />
     <Compile Include="Commands\CreateRuleCommand.cs" />
     <Compile Include="Commands\FinalizeElementCommand.cs" />
     <Compile Include="Commands\NewElementCommand.cs" />

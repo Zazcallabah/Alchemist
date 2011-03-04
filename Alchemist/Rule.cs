@@ -320,15 +320,14 @@ namespace Alchemist
 
 		public override string ToString()
 		{
-			string st = "";
+			string ingredients = "";
 			if( Ingredients != null )
-				foreach( var el in Ingredients )
-				{
-					st += el;
-					st += " + ";
-				}
+				ingredients = Ingredients.Aggregate( ingredients, ( current, el ) => current + ( el + " + " ) );
+			string result = "";
+			if( Result != null )
+				result = Result.Aggregate( result, ( current, el ) => current + ( el + " + " ) );
 
-			return st + " -> ";
+			return ingredients.Trim( ' ', '+' ) + " -> " + result.Trim( ' ', '+' );
 		}
 
 		public override bool Equals( object obj )

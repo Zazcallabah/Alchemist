@@ -12,6 +12,16 @@ namespace UnitTests
 	public class ChemistTests
 	{
 		[TestMethod]
+		public void CanUsePrintCommand()
+		{
+			var rs = new RuleSet();
+			var c = Setup( rs, new[] { "fire", ">water", "energy", "?fire" } );
+			c.Cook();
+
+			Assert.AreEqual( 3, rs.FoundElements.Length );
+		}
+
+		[TestMethod]
 		public void AddExplicitRuleWithNewElementsResetsRecommendedElementProgress()
 		{
 			var rs = new RuleSet();
