@@ -12,6 +12,15 @@ namespace UnitTests
 	public class AlchemyTests
 	{
 		[TestMethod]
+		[DeploymentItem( "xmldata\\testdataset1.xml" )]
+		public void CallingForEachRuleWithRealDataDoesntCrash()
+		{
+			var rs = TestTools.GetFromXml( "testdataset1.xml" );
+			var controller = new AlchemyController( rs );
+			controller.ForEachRuleContaining( "earth", e => { } );
+		}
+
+		[TestMethod]
 		public void ExtensiveControllerRoundtripMonkeyTest()
 		{
 			var rs = new RuleSet();
@@ -280,7 +289,7 @@ namespace UnitTests
 			var controller = new AlchemyController( rs );
 			controller.RegisterNewElement( "fire" );
 			var rule = controller.RecommendNewRule();
-			rs.Rules = new[] { rule };
+			controller.ReportChangedRule( rule );
 
 			var finalRule = controller.RecommendNewRule();
 

@@ -279,7 +279,6 @@ namespace Alchemist
 		}
 
 		Element[] _ingredients;
-		int _ingredientCount;
 
 		[XmlElement( "ingredient" )]
 		public Element[] Ingredients
@@ -287,20 +286,23 @@ namespace Alchemist
 			get { return _ingredients; }
 			set
 			{
-				_ingredients = value;
-
-				if( _ingredients != null )
-				{
-					_ingredientCount = _ingredients.Count();
-					Array.Sort( _ingredients );
-				}
-				else
-					_ingredientCount = 0;
+				_ingredients = value ?? new Element[0];
+				Array.Sort( _ingredients );
 			}
 		}
 
+		Element[] _result;
+
 		[XmlElement( "result" )]
-		public Element[] Result { get; set; }
+		public Element[] Result
+		{
+			get { return _result; }
+			set
+			{
+				_result = value ?? new Element[0];
+				Array.Sort( _result );
+			}
+		}
 
 		private static readonly Rule Empty = new Rule();
 
@@ -343,15 +345,10 @@ namespace Alchemist
 
 		public bool Equals( Rule other )
 		{
-			if( _ingredientCount != other._ingredientCount )
+			if( Ingredients.Length != other.Ingredients.Length )
 				return false;
 
-			for( int i = 0; i < _ingredientCount; i++ )
-			{
-				if( !Ingredients[i].Equals( other.Ingredients[i] ) )
-					return false;
-			}
-			return true;
+			return !Ingredients.Where( ( t, i ) => !t.Equals( other.Ingredients[i] ) ).Any();
 		}
 
 		public override int GetHashCode()
@@ -382,6 +379,11 @@ namespace Alchemist
 				.Where( s => !string.IsNullOrEmpty( s ) )
 				.Select( s => new Element( s.Trim() ) )
 				.ToArray();
+		}
+
+		public bool Contains( string elementName )
+		{
+			return Ingredients.Any( e => e.Name.Equals( elementName ) ) || Result.Any( e => e.Name.Equals( elementName ) );
 		}
 	}
 }

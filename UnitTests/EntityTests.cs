@@ -10,6 +10,75 @@ namespace UnitTests
 	[TestClass]
 	public class EntityTests
 	{
+		[TestMethod]
+		public void RulesCanReportThatItContainsElementInResult()
+		{
+			var t = new Rule( new[] { "u", "x" }, "a" );
+			bool result = t.Contains( "a" );
+
+			Assert.IsTrue( result );
+		}
+		[TestMethod]
+		public void RulesCanReportThatItNotContainsElementNotInResult()
+		{
+			var t = new Rule( new[] { "u", "x" }, "a" );
+			bool result = t.Contains( "33" );
+
+			Assert.IsFalse( result );
+		}
+		[TestMethod]
+		public void RulesCanReportThatItNotContainsElementNotInResultWithEmptyIngredients()
+		{
+			var t = new Rule( new string[0], "a" );
+			bool result = t.Contains( "33" );
+
+			Assert.IsFalse( result );
+		}
+
+		[TestMethod]
+		public void RulesCanReportThatItContainsElementInResultWithEmptyIngredients()
+		{
+			var t = new Rule( new string[0], "a" );
+			bool result = t.Contains( "a" );
+
+			Assert.IsTrue( result );
+		}
+
+
+		[TestMethod]
+		public void RulesCanReportThatItContainsElementInIngredients()
+		{
+			var t = new Rule( new[] { new Element( "a" ), new Element( "x" ) } );
+			bool result = t.Contains( "a" );
+
+			Assert.IsTrue( result );
+		}
+		[TestMethod]
+		public void RulesCanReportThatItContainsElementInIngredients2()
+		{
+			var t = new Rule( new[] { new Element( "a" ), new Element( "x" ) } );
+			bool result = t.Contains( "x" );
+
+			Assert.IsTrue( result );
+		}
+
+		[TestMethod]
+		public void RulesCanReportThatItNotContainsElementNotInIngredients()
+		{
+			var t = new Rule( new[] { new Element( "a" ), new Element( "x" ) } );
+			bool result = t.Contains( "x3" );
+
+			Assert.IsFalse( result );
+		}
+
+		[TestMethod]
+		public void RulesCanReportThatItNotContainsElementEmptyIngredients()
+		{
+			var t = new Rule();
+			bool result = t.Contains( "x3" );
+
+			Assert.IsFalse( result );
+		}
 
 		[TestMethod]
 		public void RuleAddsIngredientsInAlphabeticalOrder()

@@ -37,10 +37,15 @@ namespace Alchemist
 		}
 
 		int _persistedIndex;
+		Rule _cachedLatestRuleReturned;
+
 		public Rule RecommendNewRule()
 		{
 			if( _rs.FoundElements.Count() == 0 )
 				return null;
+
+			if( _cachedLatestRuleReturned != null )
+				return _cachedLatestRuleReturned;
 
 			int elementCount = _rs.FoundElements.Count();
 			for( int i = _persistedIndex; i < elementCount; i++ )
@@ -59,6 +64,7 @@ namespace Alchemist
 					if( !_rs.Rules.Any( r => r.Equals( rule ) ) )
 					{
 						_persistedIndex = i;
+						_cachedLatestRuleReturned = rule;
 						return rule;
 					}
 				}
@@ -75,6 +81,7 @@ namespace Alchemist
 
 		public void ReportChangedRule( Rule rule, bool overridesExistingRule )
 		{
+			_cachedLatestRuleReturned = null;
 			if( _rs.Rules.Any( r => r.Equals( rule ) ) )
 			{
 				if( overridesExistingRule )
@@ -100,6 +107,7 @@ namespace Alchemist
 
 		public void FinalizeElement( string elementname )
 		{
+			_cachedLatestRuleReturned = null;
 			_rs.SetTerminalElement( elementname );
 		}
 
@@ -118,7 +126,7 @@ namespace Alchemist
 
 		public void ForEachRuleContaining( string elementname, Action<Rule> action )
 		{
-			var rules = _rs.Rules.Where( r => r.Ingredients.Any( e => e.Name.Equals( elementname ) ) || r.Result.Any( e => e.Name.Equals( elementname ) ) );
+			var rules = _rs.Rules.Where( r => r.Contains( elementname ) );
 			foreach( var rule in rules )
 				action( rule );
 		}

@@ -19,7 +19,7 @@ namespace UnitTests
 			var input = new[] { ">anything", "*anything", "!" };
 			foreach( var s in input )
 				comm.InputQueue.Enqueue( s );
-			var rs = GetFromXml( "timingtest.xml" );
+			var rs = TestTools.GetFromXml( "timingtest.xml" );
 			var controller = new AlchemyController( rs );
 			var chemist = new Chemist( controller, comm );
 			long mark = 0;
@@ -41,7 +41,7 @@ namespace UnitTests
 			var input = new[] { ">anything", "+anything", "!" };
 			foreach( var s in input )
 				comm.InputQueue.Enqueue( s );
-			var rs = GetFromXml( "timingtest.xml" );
+			var rs = TestTools.GetFromXml( "timingtest.xml" );
 			var controller = new AlchemyController( rs );
 			var chemist = new Chemist( controller, comm );
 			long mark = 0;
@@ -63,7 +63,7 @@ namespace UnitTests
 			var input = new[] { "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "!" };
 			foreach( var s in input )
 				comm.InputQueue.Enqueue( s );
-			var rs = GetFromXml( "timingtest.xml" );
+			var rs = TestTools.GetFromXml( "timingtest.xml" );
 			Attach( rs );
 			var controller = new AlchemyController( rs );
 			var chemist = new Chemist( controller, comm );
@@ -92,7 +92,7 @@ namespace UnitTests
 		{
 			var comm = new TestCommunicator();
 			comm.InputQueue.Enqueue( "!" );
-			var rs = GetFromXml( "timingtest.xml" );
+			var rs = TestTools.GetFromXml( "timingtest.xml" );
 			var controller = new AlchemyController( rs );
 			var chemist = new Chemist( controller, comm );
 
@@ -103,7 +103,7 @@ namespace UnitTests
 		[DeploymentItem( "xmldata\\timingtest.xml" )]
 		public void TimeEntireDeserialization()
 		{
-			PerformTimedTask( () => GetFromXml( "timingtest.xml" ) );
+			PerformTimedTask( () => TestTools.GetFromXml( "timingtest.xml" ) );
 		}
 
 		static void PerformTimedTask( Action task )
@@ -112,14 +112,6 @@ namespace UnitTests
 			task();
 			var time = new TimeSpan( DateTime.Now.Ticks - mark );
 			Assert.Fail( "Took: " + time );
-		}
-
-		static RuleSet GetFromXml( string filename )
-		{
-			var serializer = new RuleSetXmlSerializer();
-			var factory = new StreamFactory( filename );
-			var persister = new XmlPersister( serializer, factory );
-			return persister.RecreateRuleSet();
 		}
 	}
 }

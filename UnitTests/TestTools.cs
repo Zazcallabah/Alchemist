@@ -25,5 +25,13 @@ namespace UnitTests
 			}
 			return tRet;
 		}
+
+		public static RuleSet GetFromXml( string filename )
+		{
+			var serializer = new RuleSetXmlSerializer();
+			var factory = new StreamFactory( filename );
+			var persister = new XmlPersister( serializer, factory );
+			return persister.RecreateRuleSet();
+		}
 	}
 }
