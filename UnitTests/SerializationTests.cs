@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Alchemist;
@@ -11,6 +12,21 @@ namespace UnitTests
 	[TestClass]
 	public class SerializationTests
 	{
+		[TestMethod]
+		public void PersisterCanCacheAndWillDespiteMultipleRapidCallsSerializeOnce()
+		{
+			var serializer = new TestSerializer();
+			var factory = new TestStreamFactory() { CurrentStream = new MemoryStream() };
+			var persister = new XmlPersister( serializer, factory, 200 );
+			var rs = new RuleSet();
+			persister.RegisterRuleSet( rs );
+
+			for( int i = 0; i < 100000; i++ )
+				rs.AddTestedRule( new Rule() );
+			persister.JoinCurrentSerialization();
+			Assert.AreEqual( 1, serializer.HitCount );
+		}
+
 		[TestMethod]
 		public void SerializeRoundtripToDisc()
 		{
@@ -119,6 +135,20 @@ namespace UnitTests
 
 			Assert.AreEqual( entity, result );
 			Assert.AreNotSame( entity, result );
+		}
+	}
+
+	public class TestSerializer : IXmlSerializer
+	{
+		public int HitCount { get; private set; }
+		public void Serialize( Stream s, object o )
+		{
+			HitCount++;
+		}
+
+		public object Deserialize( Stream s )
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

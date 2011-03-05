@@ -80,10 +80,25 @@ namespace UnitTests
 
 		static XmlPersister Attach( RuleSet rs )
 		{
-			var tempfilename = new Random().Next( 100000 ) + "-data.xml";
-			var persister = new XmlPersister( new RuleSetXmlSerializer(), new StreamFactory( tempfilename ) );
+			var tempfilename = new Random().Next( 10000000 ) + "-data.xml";
+			var persister = new XmlPersister( new RuleSetXmlSerializer(), new StreamFactory( tempfilename ), 2000 );
 			persister.RegisterRuleSet( rs );
 			return persister;
+		}
+
+		[TestMethod]
+		[DeploymentItem( "xmldata\\testdataset1.xml" )]
+		public void TimeAddMultipleWithRealDataAndDeserialization()
+		{
+			var comm = new TestCommunicator();
+			comm.InputQueue.Enqueue( "*boiler" );
+			comm.InputQueue.Enqueue( "!" );
+			var rs = TestTools.GetFromXml( "testdataset1.xml" );
+			Attach( rs );
+			var controller = new AlchemyController( rs );
+			var chemist = new Chemist( controller, comm );
+
+			PerformTimedTask( chemist.Cook );
 		}
 
 		[TestMethod]

@@ -30,7 +30,7 @@ namespace UnitTests
 		{
 			var serializer = new RuleSetXmlSerializer();
 			var factory = new StreamFactory( filename );
-			var persister = new XmlPersister( serializer, factory );
+			var persister = new XmlPersister( serializer, factory, 2000 );
 			return persister.RecreateRuleSet();
 		}
 	}

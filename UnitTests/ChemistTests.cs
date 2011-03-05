@@ -16,7 +16,7 @@ namespace UnitTests
 		public void CanUsePrintCommand()
 		{
 			var rs = new RuleSet();
-			var c = Setup( rs, new[] { "fire", ">water", "energy", "?fire" } );
+			var c = Setup( rs, new[] { ">fire", ">water", "energy", "?fire" } );
 			c.Cook();
 
 			Assert.AreEqual( 3, rs.FoundElements.Length );
@@ -27,7 +27,7 @@ namespace UnitTests
 		{
 			var rs = new RuleSet();
 			var controller = new AlchemyController( rs );
-			var c = Setup( controller, new[] { "fire", ">water", "", "", "#fire,fire:energy", "!" } );
+			var c = Setup( controller, new[] { ">fire", ">water", "", "", "#fire,fire:energy", "!" } );
 			c.Cook();
 
 			var rule = controller.RecommendNewRule();
@@ -39,7 +39,7 @@ namespace UnitTests
 		public void MultiAddDoesntWorkWithUnknownElement()
 		{
 			var rs = new RuleSet();
-			var c = Setup( rs, new[] { "fire", ">water", ">air", ">earth", "*trolololo", "!" } );
+			var c = Setup( rs, new[] { ">fire", ">water", ">air", ">earth", "*trolololo", "!" } );
 
 			c.Cook();
 
@@ -51,7 +51,7 @@ namespace UnitTests
 		public void MultiAddDoesntOverrideExistingRule()
 		{
 			var rs = new RuleSet();
-			var c = Setup( rs, new[] { "fire", ">water", ">air", ">earth", "#fire,water:water", "*water", "!" } );
+			var c = Setup( rs, new[] { ">fire", ">water", ">air", ">earth", "#fire,water:water", "*water", "!" } );
 
 			c.Cook();
 
@@ -63,7 +63,7 @@ namespace UnitTests
 		public void BadDataAsIngredientsDoesntCompletelyBorktheruleSet()
 		{
 			var rs = new RuleSet();
-			var c = Setup( rs, new[] { "fire", "#fire,f3ire:water", "!" } );
+			var c = Setup( rs, new[] { ">fire", "#fire,f3ire:water", "!" } );
 
 			c.Cook();
 
@@ -75,7 +75,7 @@ namespace UnitTests
 		public void NewElementsCanBeAddedUsingSpecificRuleAddCommand()
 		{
 			var rs = new RuleSet();
-			var c = Setup( rs, new[] { "fire", "#fire,fire:water", "!" } );
+			var c = Setup( rs, new[] { ">fire", "#fire,fire:water", "!" } );
 
 			c.Cook();
 
@@ -88,7 +88,7 @@ namespace UnitTests
 		public void UserCanSetSpecificRule()
 		{
 			var rs = new RuleSet();
-			var c = Setup( rs, new[] { "fire", ">water", ">air", "#fire,air:water", "!" } );
+			var c = Setup( rs, new[] { ">fire", ">water", ">air", "#fire,air:water", "!" } );
 
 			c.Cook();
 
@@ -100,7 +100,7 @@ namespace UnitTests
 		public void SpecificRuleOverridesExistingRule()
 		{
 			var rs = new RuleSet();
-			var c = Setup( rs, new[] { "fire", ">water", ">air", "#fire,air:water", "#fire,air:energy", "!" } );
+			var c = Setup( rs, new[] { ">fire", ">water", ">air", "#fire,air:water", "#fire,air:energy", "!" } );
 
 			c.Cook();
 
@@ -112,7 +112,7 @@ namespace UnitTests
 		public void ChemistCanHandleMultiAddCommand()
 		{
 			var rs = new RuleSet();
-			var c = Setup( rs, new[] { "fire", ">water", ">air", "*fire", "!" } );
+			var c = Setup( rs, new[] { ">fire", ">water", ">air", "*fire", "!" } );
 
 			c.Cook();
 
@@ -126,7 +126,7 @@ namespace UnitTests
 		public void ChemistCanHandleAdditionOfNewElementLateInTheGame()
 		{
 			var rs = new RuleSet();
-			var c = Setup( rs, new[] { "fire", ">water", ">air", "", "alcohol", "", "", "ocean", ">earth", "bunny", "+bunny", "bunny", "", "", "" } );
+			var c = Setup( rs, new[] { ">fire", ">water", ">air", "", "alcohol", "", "", "ocean", ">earth", "bunny", "+bunny", "bunny", "", "", "" } );
 
 			c.Cook();
 
@@ -138,7 +138,7 @@ namespace UnitTests
 		public void CanExitPrematurely()
 		{
 			var rs = new RuleSet();
-			var c = Setup( rs, new[] { "fire", ">water", "!", "alcohol", "+alcohol", "ocean", "", "", "", "", "", "", "", "" } );
+			var c = Setup( rs, new[] { ">fire", ">water", "!", "alcohol", "+alcohol", "ocean", "", "", "", "", "", "", "", "" } );
 
 			c.Cook();
 
@@ -149,7 +149,7 @@ namespace UnitTests
 		public void CanPerformBasicSimulationRoundtrip()
 		{
 			var rs = new RuleSet();
-			var c = Setup( rs, new[] { "fire", ">water", "", "alcohol", "+alcohol", "ocean", "", "", "", "", "", "", "", "" } );
+			var c = Setup( rs, new[] { ">fire", ">water", "", "alcohol", "+alcohol", "ocean", "", "", "", "", "", "", "", "" } );
 
 			c.Cook();
 
@@ -161,7 +161,7 @@ namespace UnitTests
 		public void UserCanExplicitlyAddRuleAndResult()
 		{
 			var rs = new RuleSet();
-			var c = Setup( rs, new[] { "fire", ">water", "#water,water:alcohol", "!" } );
+			var c = Setup( rs, new[] { ">fire", ">water", "#water,water:alcohol", "!" } );
 
 			c.Cook();
 

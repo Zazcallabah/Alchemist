@@ -17,12 +17,12 @@ namespace UnitTests
 		{
 			var serializer = new TestXmlSerializer();
 			var stream = new TestStreamFactory { CurrentStream = new MemoryStream() };
-			var persister = new XmlPersister( serializer, stream );
+			var persister = new XmlPersister( serializer, stream, 200 );
 			var rs = new RuleSet();
 			persister.RegisterRuleSet( rs );
 			var controller = new AlchemyController( rs );
 			controller.RegisterNewElement( "aoeu" );
-
+			persister.JoinCurrentSerialization();
 			Assert.AreEqual( 1, serializer.SerializeCount );
 		}
 
@@ -34,12 +34,12 @@ namespace UnitTests
 			var streamcontents = new byte[2048];
 			var stream = new TestStreamFactory { CurrentStream = new MemoryStream( streamcontents ) };
 
-			var persister = new XmlPersister( serializer, stream );
+			var persister = new XmlPersister( serializer, stream, 200 );
 			var rs = new RuleSet();
 			persister.RegisterRuleSet( rs );
 			var controller = new AlchemyController( rs );
 			controller.RegisterNewElement( elementname );
-
+			persister.JoinCurrentSerialization();
 			Assert.IsTrue( Encoding.UTF8.GetString( streamcontents ).Contains( elementname ) );
 		}
 
@@ -63,7 +63,7 @@ namespace UnitTests
 			var stream = new TestStreamFactory { CurrentStream = new MemoryStream( streamcontents ) };
 			stream.CurrentStream = xml;
 			stream.CurrentStream.Position = 0;
-			var persister = new XmlPersister( serializer, stream );
+			var persister = new XmlPersister( serializer, stream, 2000 );
 			var other = persister.RecreateRuleSet();
 
 			Assert.AreEqual( rs, other );

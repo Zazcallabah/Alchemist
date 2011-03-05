@@ -17,7 +17,7 @@ namespace UnitTests
 		public void RuleSetOnlyNotifiesWhenStrictlyNeccessary()
 		{
 			var changedprops = new List<string>();
-			var persister = new XmlPersister( new RuleSetXmlSerializer(), new StreamFactory( "data.xml" ) );
+			var persister = new XmlPersister( new RuleSetXmlSerializer(), new StreamFactory( "data.xml" ), 2000 );
 			var rs = persister.RecreateRuleSet();
 			rs.PropertyChanged += ( s, e ) => changedprops.Add( e.PropertyName );
 

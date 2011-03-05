@@ -15,6 +15,7 @@ namespace Alchemist
 		{
 			_controller = controller;
 			_communicator = communicator;
+
 			_preCommands = new List<IPreCommand>
 			{
 				new IsFinishedCommand(),
@@ -37,32 +38,18 @@ namespace Alchemist
 		public void Cook()
 		{
 			PrintMenu();
-			if( _controller.State == AlchemyState.NotStarted )
-				_communicator.Display( "No elements recorded, please add basic elements to combine." );
 
 			while( true )
 			{
-				foreach( var c in _preCommands )
-				{
-					var result = c.Run( _controller, _communicator );
-					if( result == Do.Exit )
-						return;
-				}
+				if( _preCommands.Select( c => c.Run( _controller, _communicator ) ).Any( result => result == Do.Exit ) )
+					return;
 
 				var reportback = _communicator.GetInput();
 
-				// Special case for first entered element
-				if( _controller.State == AlchemyState.NotStarted )
+				foreach( var result in _commands
+					.Where( c => c.AppliesTo( reportback ) )
+					.Select( c => c.Run( reportback, _controller, _communicator ) ) )
 				{
-					var c = new NewElementCommand();
-					if( !string.IsNullOrEmpty( reportback ) )
-						c.Run( reportback, _controller, _communicator );
-					continue;
-				}
-
-				foreach( var c in _commands.Where( c => c.AppliesTo( reportback ) ) )
-				{
-					var result = c.Run( reportback, _controller, _communicator );
 					if( result == Do.Exit )
 						return;
 					if( result == Do.AnotherRule )
@@ -77,6 +64,9 @@ namespace Alchemist
 		{
 			foreach( var c in _commands )
 				_communicator.Display( c.ToString() );
+
+			if( _controller.State == AlchemyState.NotStarted )
+				_communicator.Display( "No elements recorded, please add basic elements to combine." );
 		}
 	}
 }
