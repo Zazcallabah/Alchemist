@@ -13,6 +13,16 @@ namespace UnitTests
 	public class ChemistTests
 	{
 		[TestMethod]
+		[DeploymentItem( "xmldata\\testdataset2.xml" )]
+		public void AddingSelfReferentialRuleWillNotCrash()
+		{
+			var rs = TestTools.GetFromXml( "testdataset2.xml" );
+			var c = Setup( rs, new[] { "#man,vampire:vampire,vampire", "!" } );
+			c.Cook();
+		}
+
+
+		[TestMethod]
 		public void CanUsePrintCommand()
 		{
 			var rs = new RuleSet();
